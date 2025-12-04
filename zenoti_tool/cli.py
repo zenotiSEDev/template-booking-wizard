@@ -68,18 +68,10 @@ def remove_template(name: str, templates_path: Optional[Path] = typer.Option(Non
 
 
 @app.command()
-def list_invoices(
-    location_id: str,
-    status: Optional[str] = typer.Option(
-        "open",
-        help="Invoice status filter. Use 'all' to return every invoice.",
-    ),
-    templates_path: Optional[Path] = typer.Option(None),
-):
+def list_invoices(location_id: str, templates_path: Optional[Path] = typer.Option(None)):
     """List invoices for a location."""
     store, client = get_services(templates_path)
-    status_filter = None if status is None or status.lower() == "all" else status
-    invoices = InvoiceManager(client, store).list(location_id, status=status_filter)
+    invoices = InvoiceManager(client, store).list(location_id)
     typer.echo(json.dumps(invoices, indent=2))
 
 

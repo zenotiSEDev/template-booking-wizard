@@ -81,13 +81,8 @@ class ZenotiApiClient:
         response.raise_for_status()
         return response
 
-    def list_invoices(
-        self, location_id: str, *, status: Optional[str] = None
-    ) -> Dict[str, Any]:
-        params = {"status": status} if status else None
-        response = self.request(
-            "GET", f"v1/locations/{location_id}/invoices", params=params
-        )
+    def list_invoices(self, location_id: str) -> Dict[str, Any]:
+        response = self.request("GET", f"v1/locations/{location_id}/invoices")
         return response.json()
 
     def create_invoice(self, location_id: str, payload: Dict[str, Any]) -> Dict[str, Any]:

@@ -40,15 +40,12 @@ class ZenotiConfig:
         default_templates_path: Optional[Path] = None,
         legacy_client_id_var: str = "ZENOTI_CLIENT_ID",
         legacy_client_secret_var: str = "ZENOTI_CLIENT_SECRET",
-        env_file: str = ".env.local",
     ) -> "ZenotiConfig":
         """Create configuration from environment variables.
 
         Raises:
             EnvironmentError: If required environment variables are missing.
         """
-
-        cls._load_env_file(env_file)
 
         base_url = os.environ.get(base_url_var)
         app_id = os.environ.get(app_id_var) or os.environ.get(legacy_client_id_var)
@@ -92,27 +89,3 @@ class ZenotiConfig:
         """Return base headers for Zenoti API requests."""
 
         return {"Accept": "application/json", "Zenoti-Api-Key": self.api_key}
-
-    @staticmethod
-    def _load_env_file(filename: str) -> None:
-        """Populate ``os.environ`` with values from a dotenv-style file if it exists.
-
-        The loader is intentionally minimal to avoid extra dependencies while
-        supporting common ``KEY=value`` lines and ignoring blanks/comments. Existing
-        environment variables are never overridden.
-        """
-
-        path = Path.cwd() / filename
-        if not path.exists():
-            return
-
-        for raw_line in path.read_text().splitlines():
-            line = raw_line.strip()
-            if not line or line.startswith("#"):
-                continue
-
-            if "=" not in line:
-                continue
-
-            key, value = line.split("=", 1)
-            os.environ.setdefault(key.strip(), value.strip())

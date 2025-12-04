@@ -13,8 +13,8 @@ class InvoiceManager:
     client: ZenotiApiClient
     templates: TemplateStore
 
-    def list(self, location_id: str, *, status: Optional[str] = None) -> Dict[str, Any]:
-        return self.client.list_invoices(location_id, status=status)
+    def list(self, location_id: str) -> Dict[str, Any]:
+        return self.client.list_invoices(location_id)
 
     def create_from_template(
         self, location_id: str, template_name: str, *, overrides: Optional[Dict[str, Any]] = None
