@@ -13,8 +13,23 @@ class InvoiceManager:
     client: ZenotiApiClient
     templates: TemplateStore
 
-    def list(self, location_id: str) -> Dict[str, Any]:
-        return self.client.list_invoices(location_id)
+    def list(
+        self,
+        location_id: str,
+        *,
+        start_date: str,
+        end_date: str,
+        include_no_show_cancel: bool = False,
+        therapist_id: Optional[str] = None,
+    ) -> Dict[str, Any]:
+        # Use appointments list endpoint instead of invoices.
+        return self.client.list_appointments(
+            location_id,
+            start_date=start_date,
+            end_date=end_date,
+            include_no_show_cancel=include_no_show_cancel,
+            therapist_id=therapist_id,
+        )
 
     def create_from_template(
         self, location_id: str, template_name: str, *, overrides: Optional[Dict[str, Any]] = None

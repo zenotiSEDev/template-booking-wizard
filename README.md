@@ -14,15 +14,23 @@ CLI and optional Streamlit UI for managing Zenoti invoice and appointment workfl
    ZENOTI_APP_ID="your-app-id"
    ZENOTI_APP_SECRET="your-app-secret"
    ZENOTI_API_KEY="your-api-key"
+   ZENOTI_ACCOUNT_ID="your-account"
+   ZENOTI_USERNAME="your-username"
+   ZENOTI_PASSWORD="your-password"
+   # Optional: stable device identifier for password grant (else leave empty)
+   ZENOTI_DEVICE_ID="your-device-id"
+   # Optional: default location/center id used when not passed on the CLI
+   ZENOTI_CENTER_ID="your-center-id"
    # Optional: location of the templates store
    ZENOTI_TEMPLATES_PATH="/path/to/templates.json"
    ```
    Values already in the environment take precedence over `.env.local`.
+   Note: `ZENOTI_BASE_URL` should be the root domain (e.g., `https://your-subdomain.zenoti.com`); any trailing `/v1` is stripped automatically.
 
 ## Fetch an auth token
 Use the Typer CLI to confirm credentials and fetch an access token (via `python main.py` or `python -m zenoti_tool.cli`):
 ```bash
-python main.py auth-token --mask False
+python main.py auth-token --no-mask
 ```
 To keep the token masked (default):
 ```bash
@@ -32,7 +40,25 @@ python main.py auth-token
 ## List invoices (defaults to "Open")
 ```bash
 python main.py list-invoices <LOCATION_ID>
+# or rely on ZENOTI_CENTER_ID:
+python main.py list-invoices
 ```
+The client first fetches a token via `POST https://api.zenoti.com/v1/tokens` with:
+```
+Headers:
+  X-Application-Id: <ZENOTI_APP_ID>
+Body (JSON):
+  {
+    "account_name": "<ZENOTI_ACCOUNT_ID>",
+    "user_name": "<ZENOTI_USERNAME>",
+    "password": "<ZENOTI_PASSWORD>",
+    "grant_type": "password",
+    "app_id": "<ZENOTI_APP_ID>",
+    "app_secret": "<ZENOTI_APP_SECRET>",
+    "device_id": "<ZENOTI_DEVICE_ID>"  // optional
+  }
+```
+Requests then use `Authorization: Bearer <token>` plus `X-Application-Id`, `X-API-Key`/`Zenoti-Api-Key`, and optional `X-Center-Id`.
 To return all invoices (no status filter):
 ```bash
 python main.py list-invoices <LOCATION_ID> --status all
@@ -50,13 +76,17 @@ Templates are stored in `data/templates.json` by default.
 
 ## Create an invoice from a template
 ```bash
-python main.py create-invoice <LOCATION_ID> "My Invoice" --overrides-file overrides.json
+python main.py create-invoice --location-id <LOCATION_ID> "My Invoice" --overrides-file overrides.json
+# or with ZENOTI_CENTER_ID:
+python main.py create-invoice "My Invoice" --overrides-file overrides.json
 ```
 `overrides.json` is optional and merged into the stored template payload.
 
 ## Book an appointment from a template
 ```bash
-python main.py book-appointment <LOCATION_ID> "My Appointment" --overrides-file overrides.json
+python main.py book-appointment --location-id <LOCATION_ID> "My Appointment" --overrides-file overrides.json
+# or with ZENOTI_CENTER_ID:
+python main.py book-appointment "My Appointment" --overrides-file overrides.json
 ```
 
 ## Optional Streamlit UI

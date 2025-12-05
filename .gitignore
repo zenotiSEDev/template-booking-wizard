@@ -1,1 +1,63 @@
 .env
+# -----------------------------
+# Python
+# -----------------------------
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+
+# Virtual environments
+venv/
+.env/
+.env*/
+.venv/
+.venv*/
+
+# Jupyter (in case you experiment)
+.ipynb_checkpoints/
+
+# Build / packaging
+build/
+dist/
+*.egg-info/
+*.egg
+.eggs/
+
+# Cache files
+.cache/
+*.log
+
+# -----------------------------
+# Environment / Secrets
+# -----------------------------
+# NEVER commit Zenoti credentials or environment configs
+.env
+.env.local
+.env.*.local
+*.env
+
+
+# Any local debug/test data you might create
+data/
+*.sqlite
+*.db
+
+# -----------------------------
+# Streamlit / UI Artifacts
+# -----------------------------
+.streamlit/
+**/.streamlit/
+
+# -----------------------------
+# Editor / IDE files
+# -----------------------------
+.vscode/
+*.code-workspace
+.idea/
+*.iml
+
+# MacOS / Windows general cruft
+.DS_Store
+Thumbs.db
